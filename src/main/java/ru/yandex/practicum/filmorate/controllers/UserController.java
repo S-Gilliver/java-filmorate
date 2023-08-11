@@ -16,8 +16,7 @@ import java.util.*;
 public class UserController {
 
     private final Map<Integer, User> usersMap = new HashMap<>();
-
-    private int id;
+    private int id = 1;
 
     @GetMapping
     public Collection<User> getUsers() {
