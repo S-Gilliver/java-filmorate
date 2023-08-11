@@ -32,7 +32,7 @@ public class UserController {
 
     @PostMapping
     public User addUser(@RequestBody @Valid User user) {
-        userValidator(user);
+        validateUser(user);
         user.setId(generateId());
         users.put(user.getId(), user);
         log.info("The user has been successfully added!");
@@ -44,13 +44,13 @@ public class UserController {
         if (!users.containsKey(user.getId())) {
             throw new NotFoundException("The user with id " + user.getId() + " does not exist!");
         }
-        userValidator(user);
+        validateUser(user);
         users.put(user.getId(), user);
         log.info("User data has been successfully updated!");
         return user;
     }
 
-    private void userValidator(User user) throws ValidationException {
+    private void validateUser(User user) throws ValidationException {
         if (user.getLogin().contains(" ")) {
             throw new BadRequestException("The login cannot contain spaces!");
         }
