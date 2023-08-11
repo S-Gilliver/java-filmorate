@@ -4,16 +4,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.BadRequestException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
-@ResponseBody
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -23,18 +20,13 @@ public class UserController {
     private int id;
 
     @GetMapping
-    public List<User> getUsers() {
-        return new ArrayList<>(usersMap.values());
+    public Collection<User> getUsers() {
+        return usersMap.values();
     }
 
     @PostMapping
     public User addUser(@RequestBody @Valid User user) {
-        if (user.getLogin().contains(" ")) {
-            throw new BadRequestException("Логин не может содержать пробелы!");
-        }
-        if ((user.getName() == null) || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
+        userValidator(user);
         user.setId(generateId());
         usersMap.put(user.getId(), user);
         log.info("Пользователь успешно добавлен!");
@@ -43,18 +35,22 @@ public class UserController {
 
     @PutMapping
     public User updateUser(@RequestBody @Valid User user) {
-        if (user.getLogin().contains(" ")) {
-            throw new BadRequestException("Логин не может содержать пробелы!");
-        }
         if (!usersMap.containsKey(user.getId())) {
             throw new NotFoundException("Пользователь с id " + user.getId() + " не существует!");
         }
-        if ((user.getName() == null) || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
+        userValidator(user);
         usersMap.put(user.getId(), user);
         log.info("Данные о пользователе успешно обновлены!");
         return user;
+    }
+
+    private void userValidator(User user) throws ValidationException {
+        if (user.getLogin().contains(" ")) {
+            throw new BadRequestException("Логин не может содержать пробелы!");
+        }
+        if ((user.getName() == null) || user.getName().isEmpty()) {
+            user.setName(user.getLogin());
+        }
     }
 
     private int generateId() {

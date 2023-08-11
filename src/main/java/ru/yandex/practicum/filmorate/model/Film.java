@@ -1,22 +1,29 @@
 package ru.yandex.practicum.filmorate.model;
 
 import lombok.Data;
+import lombok.Builder;
+import lombok.NonNull;
+
 import javax.validation.constraints.*;
 import java.time.LocalDate;
 
 @Data
+@Builder
 public class Film {
+
+    @Positive
     private Integer id;
 
-    @NotEmpty(message = "Некорректно введено название фильма")
+    @NotBlank
     private String name;
 
-    @Size(min = 0, max = 200, message = "Некорректно введено описание фильма")
+    @Size(max = 200)
     private String description;
 
+    @NonNull
     private LocalDate releaseDate;
 
-    @Positive(message = "Некорректно введена продолжительность фильма")
+    @Positive
     private Integer duration;
 
 }
