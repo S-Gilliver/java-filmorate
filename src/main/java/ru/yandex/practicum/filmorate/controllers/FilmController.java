@@ -50,7 +50,7 @@ public class FilmController {
         return film;
     }
 
-    private void validateFilm(Film film) throws ValidationException {
+    private void validateFilm(Film film) {
         if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
             throw new ValidationException("Cinema hasn't been invented yet!");
         }

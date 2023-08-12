@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.practicum.filmorate.exception.BadRequestException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import javax.validation.Valid;
@@ -33,6 +32,9 @@ public class UserController {
     @PostMapping
     public User addUser(@RequestBody @Valid User user) {
         validateUser(user);
+        if ((user.getName() == null) || user.getName().isEmpty()) {
+            user.setName(user.getLogin());
+        }
         user.setId(generateId());
         users.put(user.getId(), user);
         log.info("The user has been successfully added!");
@@ -45,17 +47,17 @@ public class UserController {
             throw new NotFoundException("The user with id " + user.getId() + " does not exist!");
         }
         validateUser(user);
+        if ((user.getName() == null) || user.getName().isEmpty()) {
+            user.setName(user.getLogin());
+        }
         users.put(user.getId(), user);
         log.info("User data has been successfully updated!");
         return user;
     }
 
-    private void validateUser(User user) throws ValidationException {
+    private void validateUser(User user) {
         if (user.getLogin().contains(" ")) {
             throw new BadRequestException("The login cannot contain spaces!");
-        }
-        if ((user.getName() == null) || user.getName().isEmpty()) {
-            user.setName(user.getLogin());
         }
     }
 
