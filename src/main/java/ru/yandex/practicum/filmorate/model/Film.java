@@ -36,6 +36,7 @@ public class Film {
     @JsonIgnore
     private Set<Integer> likes;
 
-    private int rate;
+    @Positive
+    private Integer rate;
 }
 
