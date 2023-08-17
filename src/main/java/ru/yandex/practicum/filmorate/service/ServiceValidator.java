@@ -1,12 +1,12 @@
 package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exception.BadRequestException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 
 import javax.validation.ValidationException;
 import java.time.LocalDate;
+import java.util.HashSet;
 
 @Component
 public class ServiceValidator {
@@ -17,11 +17,18 @@ public class ServiceValidator {
         if (film.getDuration() == null) {
             throw new ValidationException("An error in the duration of the movie!");
         }
+
     }
 
     public void validateUser(User user) {
+        if (user.getFriends() == null) {
+            user.setFriends(new HashSet<>());
+        }
         if (user.getLogin().contains(" ")) {
-            throw new BadRequestException("The login cannot contain spaces!");
+            throw new ValidationException("The login cannot contain spaces!");
+        }
+        if (user.getLogin().isBlank()) {
+            throw new ValidationException("User not have login!");
         }
     }
 }
