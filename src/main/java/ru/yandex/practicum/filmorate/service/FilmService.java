@@ -92,9 +92,6 @@ public class FilmService {
             if (count > filmStorage.getNames().size()) {
                 count = filmStorage.getNames().size();
             }
-            if (count < 1) {
-                throw new NotFoundException("Count < 1");
-            }
             return list.subList(0, count);
         } catch (Exception e) {
             throw new BadRequestException("There are no popular movies!");
