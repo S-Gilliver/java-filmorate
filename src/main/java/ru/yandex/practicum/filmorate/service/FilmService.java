@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.comparator.UserComparator;
 import ru.yandex.practicum.filmorate.exception.BadRequestException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -10,9 +11,9 @@ import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -85,11 +86,15 @@ public class FilmService {
     }
 
     public List<Film> getPopularFilms(int count) {
-        return getFilms()
-                .stream()
-                .filter(film -> film.getLikes() != null)
-                .sorted((t1, t2) -> t2.getLikes().size() - t1.getLikes().size())
-                .limit(count)
-                .collect(Collectors.toList());
+        try {
+            List<Film> list = new ArrayList<>(filmStorage.getFilms());
+            list.sort(new UserComparator().reversed());
+            if (count > filmStorage.getNames().size()) {
+                count = filmStorage.getNames().size();
+            }
+            return list.subList(0, count);
+        } catch (Exception e) {
+            throw new BadRequestException("There are no popular movies!");
+        }
     }
 }

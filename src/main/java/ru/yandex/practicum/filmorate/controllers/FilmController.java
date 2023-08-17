@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import ru.yandex.practicum.filmorate.exception.BadRequestException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
@@ -70,9 +69,6 @@ public class FilmController {
     @GetMapping("popular")
     @ResponseStatus(HttpStatus.OK)
     public List<Film> getPopularFilms(@RequestParam(defaultValue = "10") Integer count) {
-        if (count <= 0) {
-            throw new BadRequestException("Длинна списка не может быть отрицательной или ровняться нулю");
-        }
         return filmService.getPopularFilms(count);
     }
 }
