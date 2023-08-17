@@ -17,6 +17,9 @@ public class ServiceValidator {
         if (film.getDuration() == null) {
             throw new ValidationException("An error in the duration of the movie!");
         }
+        if (film.getLikes() == null) {
+            film.setLikes(new HashSet<>());
+        }
 
     }
 
