@@ -41,7 +41,7 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film updateFilm(Film film) {
-        names.remove(getFilmById(film.getId()));
+        names.remove(getFilmById(film.getId()).getName());
         names.add(film.getName());
         films.put(film.getId(), film);
         log.info("The movie has been successfully updated!");
