@@ -73,7 +73,7 @@ public class FilmService {
         if (!filmStorage.contains(id) || !userStorage.contains(userId)) {
             throw new NotFoundException("There is no such movie or user!");
         }
-        if (filmStorage.getFilmById(id).getLikes().contains(userId)) {
+        if (!filmStorage.getFilmById(id).getLikes().contains(userId)) {
             throw new BadRequestException("The user did not like this movie!");
         }
         Film film = filmStorage.getFilmById(id);
