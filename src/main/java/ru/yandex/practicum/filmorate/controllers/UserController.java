@@ -33,7 +33,7 @@ public class UserController {
         return userService.getUsers();
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public User findById(@PathVariable Integer id) {
         return userService.getUserById(id);
@@ -51,21 +51,21 @@ public class UserController {
         return userService.updateUser(user);
     }
 
-    @PutMapping("{id}/friends/{friendId}")
+    @PutMapping("/{id}/friends/{friendId}")
     @ResponseStatus(HttpStatus.OK)
     public String addFriend(@PathVariable(value = "id") Integer id,
                             @PathVariable(value = "friendId") Integer friendId) {
         return userService.addFriend(id, friendId);
     }
 
-    @DeleteMapping("{id}/friends/{friendId}")
+    @DeleteMapping("/{id}/friends/{friendId}")
     @ResponseStatus(HttpStatus.OK)
     public String deleteFriend(@PathVariable(value = "id") Integer id,
                                @PathVariable(value = "friendId") Integer friendId) {
         return userService.deleteFriend(id, friendId);
     }
 
-    @GetMapping("{id}/friends")
+    @GetMapping("/{id}/friends")
     @ResponseStatus(HttpStatus.OK)
     public List<User> getFriendList(@PathVariable(value = "id") Integer id) {
         return userService.getFriendList(id);

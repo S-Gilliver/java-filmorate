@@ -53,14 +53,14 @@ public class FilmService {
         return filmStorage.updateFilm(film);
     }
 
-    public String addLike(Integer filmId, Integer userId) {
-        if (!filmStorage.contains(filmId) || !userStorage.contains(userId)) {
+    public String addLike(Integer id, Integer userId) {
+        if (!filmStorage.contains(id) || !userStorage.contains(userId)) {
             throw new NotFoundException("There is no such movie or user!");
         }
-        if (filmStorage.getFilmById(filmId).getLikes().contains(userId)) {
+        if (filmStorage.getFilmById(id).getLikes().contains(userId)) {
             throw new BadRequestException("The user has already liked this movie!");
         }
-        Film film = filmStorage.getFilmById(filmId);
+        Film film = filmStorage.getFilmById(id);
         film.getLikes().add(userId);
         film.setRate(film.getRate() + 1);
         log.info("Like it!");
@@ -69,14 +69,14 @@ public class FilmService {
                 + " liked the movie " + film.getName());
     }
 
-    public String deleteLike(Integer filmId, Integer userId) {
-        if (!filmStorage.contains(filmId) || !userStorage.contains(userId)) {
+    public String deleteLike(Integer id, Integer userId) {
+        if (!filmStorage.contains(id) || !userStorage.contains(userId)) {
             throw new NotFoundException("There is no such movie or user!");
         }
-        if (filmStorage.getFilmById(filmId).getLikes().contains(userId)) {
+        if (filmStorage.getFilmById(id).getLikes().contains(userId)) {
             throw new BadRequestException("The user did not like this movie!");
         }
-        Film film = filmStorage.getFilmById(filmId);
+        Film film = filmStorage.getFilmById(id);
         film.getLikes().add(userId);
         film.setRate(film.getRate() - 1);
         log.info("Removed the like!");
