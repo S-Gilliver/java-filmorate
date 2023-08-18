@@ -13,7 +13,7 @@ import java.util.Map;
 public class InMemoryUserStorage implements UserStorage {
 
     private final Map<Integer, User> users = new HashMap<>();
-    private int id = 1;
+    private Integer id = 1;
 
     @Override
     public Collection<User> getUsers() {
@@ -22,7 +22,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User getUserById(int id) {
+    public User getUserById(Integer id) {
         log.info("User received!");
         return users.get(id);
     }
@@ -49,11 +49,11 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public boolean contains(int id) {
+    public boolean contains(Integer id) {
         return users.containsKey(id);
     }
 
-    private int generateId() {
+    private Integer generateId() {
         return id++;
     }
 }

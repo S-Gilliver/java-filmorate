@@ -34,9 +34,9 @@ public class FilmController {
         return filmService.getFilms();
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Film getFilmById(int id) {
+    public Film getFilmById(@PathVariable Integer id) {
         return filmService.getFilmById(id);
     }
 
@@ -52,14 +52,14 @@ public class FilmController {
         return filmService.updateFilm(film);
     }
 
-    @PutMapping("{id}/like/{userId}")
+    @PutMapping("/{id}/like/{userId}")
     @ResponseStatus(HttpStatus.OK)
     public String addLike(@PathVariable(value = "id") Integer id,
                           @PathVariable(value = "userId") Integer userId) {
         return filmService.addLike(id, userId);
     }
 
-    @DeleteMapping("{id}/like/{userId}")
+    @DeleteMapping("/{id}/like/{userId}")
     @ResponseStatus(HttpStatus.OK)
     public String deleteLike(@PathVariable(value = "id") Integer id,
                              @PathVariable(value = "userId") Integer userId) {

@@ -8,11 +8,11 @@ import java.util.Set;
 public interface FilmStorage {
     Collection<Film> getFilms();
 
-    Film getFilmById(int id);
+    Film getFilmById(Integer id);
 
     Film addFilm(Film film);
 
-    boolean contains(int id);
+    boolean contains(Integer id);
 
     Set<String> getNames();
 

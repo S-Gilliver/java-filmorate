@@ -33,7 +33,7 @@ public class FilmService {
         return filmStorage.getFilms();
     }
 
-    public Film getFilmById(int id) {
+    public Film getFilmById(Integer id) {
         if (!filmStorage.contains(id)) {
             throw new NotFoundException("The movie was not found!");
         }
@@ -53,7 +53,7 @@ public class FilmService {
         return filmStorage.updateFilm(film);
     }
 
-    public String addLike(int filmId, int userId) {
+    public String addLike(Integer filmId, Integer userId) {
         if (!filmStorage.contains(filmId) || !userStorage.contains(userId)) {
             throw new NotFoundException("There is no such movie or user!");
         }
@@ -69,7 +69,7 @@ public class FilmService {
                 + " liked the movie " + film.getName());
     }
 
-    public String deleteLike(int filmId, int userId) {
+    public String deleteLike(Integer filmId, Integer userId) {
         if (!filmStorage.contains(filmId) || !userStorage.contains(userId)) {
             throw new NotFoundException("There is no such movie or user!");
         }
@@ -85,7 +85,7 @@ public class FilmService {
                 + " removed the like from the movie " + film.getName());
     }
 
-    public List<Film> getPopularFilms(int count) {
+    public List<Film> getPopularFilms(Integer count) {
         try {
             List<Film> list = new ArrayList<>(filmStorage.getFilms());
             list.sort(new UserComparator().reversed());

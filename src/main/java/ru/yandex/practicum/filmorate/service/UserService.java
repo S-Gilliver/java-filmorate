@@ -26,7 +26,7 @@ public class UserService {
         return userStorage.getUsers();
     }
 
-    public User getUserById(int id) {
+    public User getUserById(Integer id) {
         if (!userStorage.contains(id)) {
             throw new NotFoundException("There is no such user!");
         }
@@ -46,7 +46,7 @@ public class UserService {
         return userStorage.updateUser(user);
     }
 
-    public String addFriend(int id, int friendId) {
+    public String addFriend(Integer id, Integer friendId) {
         if (!userStorage.contains(id) || !userStorage.contains(friendId)) {
             throw new NotFoundException("One of the users is not registered!");
         }
@@ -58,7 +58,7 @@ public class UserService {
                 + " now friends!");
     }
 
-    public String deleteFriend(int id, int friendId) {
+    public String deleteFriend(Integer id, Integer friendId) {
         if (!userStorage.contains(id) || !userStorage.contains(friendId)) {
             throw new NotFoundException("One of the users is not registered!");
         }
@@ -70,7 +70,7 @@ public class UserService {
                 + " not friends anymore!");
     }
 
-    public List<User> getFriendList(int id) {
+    public List<User> getFriendList(Integer id) {
         if (!userStorage.contains(id)) {
             throw new NotFoundException("The user is not registered!");
         }

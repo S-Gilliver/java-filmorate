@@ -16,7 +16,7 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     private final Map<Integer, Film> films = new HashMap<>();
     private final Set<String> names = new HashSet<>();
-    private int id = 1;
+    private Integer id = 1;
 
     @Override
     public Collection<Film> getFilms() {
@@ -25,7 +25,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film getFilmById(int id) {
+    public Film getFilmById(Integer id) {
         log.info("The film was received!");
         return films.get(id);
     }
@@ -54,11 +54,11 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public boolean contains(int id) {
+    public boolean contains(Integer id) {
         return films.containsKey(id);
     }
 
-    private int generateId() {
+    private Integer generateId() {
         return id++;
     }
 }

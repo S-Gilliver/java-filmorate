@@ -8,11 +8,11 @@ public interface UserStorage {
 
     Collection<User> getUsers();
 
-    User getUserById(int id);
+    User getUserById(Integer id);
 
     User addUser(User user);
 
     User updateUser(User user);
 
-    boolean contains(int id);
+    boolean contains(Integer id);
 }
