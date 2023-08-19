@@ -32,6 +32,9 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film addFilm(Film film) {
+        if (film.getLikes() == null) {
+            film.setLikes(new HashSet<>());
+        }
         film.setId(generateId());
         films.put(film.getId(), film);
         names.add(film.getName());
@@ -41,6 +44,9 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film updateFilm(Film film) {
+        if (film.getLikes() == null) {
+            film.setLikes(new HashSet<>());
+        }
         names.remove(getFilmById(film.getId()).getName());
         names.add(film.getName());
         films.put(film.getId(), film);

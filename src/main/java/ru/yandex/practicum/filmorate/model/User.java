@@ -35,6 +35,6 @@ public class User {
     private LocalDate birthday;
 
     @JsonIgnore
-    private Set<Integer> friends;
+    private Set<Integer> friendIds;
 }
 

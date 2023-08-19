@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.comparator.UserComparator;
 import ru.yandex.practicum.filmorate.exception.BadRequestException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -11,9 +10,11 @@ import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
-import java.util.ArrayList;
+import javax.validation.ValidationException;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -21,12 +22,10 @@ public class FilmService {
 
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
-    private final ServiceValidator serviceValidator;
 
-    public FilmService(InMemoryFilmStorage filmStorage, InMemoryUserStorage userStorage, ServiceValidator serviceValidator) {
+    public FilmService(InMemoryFilmStorage filmStorage, InMemoryUserStorage userStorage) {
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
-        this.serviceValidator = serviceValidator;
     }
 
     public Collection<Film> getFilms() {
@@ -41,7 +40,7 @@ public class FilmService {
     }
 
     public Film addFilm(Film film) {
-        serviceValidator.validateFilm(film);
+        validateFilm(film);
         return filmStorage.addFilm(film);
     }
 
@@ -49,7 +48,7 @@ public class FilmService {
         if (!filmStorage.contains(film.getId())) {
             throw new NotFoundException("The movie with id " + film.getId() + " does not exist!");
         }
-        serviceValidator.validateFilm(film);
+        validateFilm(film);
         return filmStorage.updateFilm(film);
     }
 
@@ -86,15 +85,20 @@ public class FilmService {
     }
 
     public List<Film> getPopularFilms(Integer count) {
-        try {
-            List<Film> list = new ArrayList<>(filmStorage.getFilms());
-            list.sort(new UserComparator().reversed());
-            if (count > filmStorage.getNames().size()) {
-                count = filmStorage.getNames().size();
-            }
-            return list.subList(0, count);
-        } catch (Exception e) {
-            throw new BadRequestException("There are no popular movies!");
+        return getFilms()
+                .stream()
+                .filter(film -> film.getLikes() != null)
+                .sorted((t1, t2) -> t2.getLikes().size() - t1.getLikes().size())
+                .limit(count)
+                .collect(Collectors.toList());
+    }
+
+    private void validateFilm(Film film) {
+        if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
+            throw new ValidationException("Cinema hasn't been invented yet!");
+        }
+        if (film.getDuration() == null) {
+            throw new ValidationException("An error in the duration of the movie!");
         }
     }
 }
