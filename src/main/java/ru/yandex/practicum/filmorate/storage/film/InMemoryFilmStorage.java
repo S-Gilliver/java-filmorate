@@ -8,14 +8,12 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 @Slf4j
 @Component
 public class InMemoryFilmStorage implements FilmStorage {
 
     private final Map<Integer, Film> films = new HashMap<>();
-    private final Set<String> names = new HashSet<>();
     private Integer id = 1;
 
     @Override
@@ -37,7 +35,6 @@ public class InMemoryFilmStorage implements FilmStorage {
         }
         film.setId(generateId());
         films.put(film.getId(), film);
-        names.add(film.getName());
         log.info("The movie has been added successfully!");
         return film;
     }
@@ -47,16 +44,9 @@ public class InMemoryFilmStorage implements FilmStorage {
         if (film.getLikes() == null) {
             film.setLikes(new HashSet<>());
         }
-        names.remove(getFilmById(film.getId()).getName());
-        names.add(film.getName());
         films.put(film.getId(), film);
         log.info("The movie has been successfully updated!");
         return film;
-    }
-
-    @Override
-    public Set<String> getNames() {
-        return names;
     }
 
     @Override
