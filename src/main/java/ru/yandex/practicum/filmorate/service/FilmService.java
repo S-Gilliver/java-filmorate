@@ -13,6 +13,7 @@ import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import javax.validation.ValidationException;
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,6 +42,9 @@ public class FilmService {
 
     public Film addFilm(Film film) {
         validateFilm(film);
+        if (film.getLikeIds() == null) {
+            film.setLikeIds(new HashSet<>());
+        }
         return filmStorage.addFilm(film);
     }
 
@@ -49,6 +53,7 @@ public class FilmService {
             throw new NotFoundException("The movie with id " + film.getId() + " does not exist!");
         }
         validateFilm(film);
+        film.setLikeIds(new HashSet<>());
         return filmStorage.updateFilm(film);
     }
 

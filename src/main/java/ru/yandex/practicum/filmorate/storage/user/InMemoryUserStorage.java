@@ -30,9 +30,6 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User addUser(User user) {
-        if (user.getFriendIds() == null) {
-            user.setFriendIds(new HashSet<>());
-        }
         user.setId(generateId());
         users.put(user.getId(), user);
         log.info("The user has been successfully added!");
@@ -41,7 +38,6 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User updateUser(User user) {
-        user.setFriendIds(new HashSet<>());
         users.put(user.getId(), user);
         log.info("User data has been successfully updated!");
         return user;
