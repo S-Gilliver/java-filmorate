@@ -52,34 +52,32 @@ public class FilmService {
         return filmStorage.updateFilm(film);
     }
 
-    public String addLike(Integer id, Integer userId) {
+    public void addLike(Integer id, Integer userId) {
         if (!filmStorage.contains(id) || !userStorage.contains(userId)) {
             throw new NotFoundException("There is no such movie or user!");
         }
-        if (filmStorage.getFilmById(id).getLikes().contains(userId)) {
+        if (filmStorage.getFilmById(id).getLikeIds().contains(userId)) {
             throw new BadRequestException("The user has already liked this movie!");
         }
         Film film = filmStorage.getFilmById(id);
-        film.getLikes().add(userId);
+        film.getLikeIds().add(userId);
         film.setRate(film.getRate() + 1);
-        log.info("Like it!");
-        return ("To the user under the login "
+        log.info("To the user under the login "
                 + userStorage.getUserById(userId).getLogin()
                 + " liked the movie " + film.getName());
     }
 
-    public String deleteLike(Integer id, Integer userId) {
+    public void deleteLike(Integer id, Integer userId) {
         if (!filmStorage.contains(id) || !userStorage.contains(userId)) {
             throw new NotFoundException("There is no such movie or user!");
         }
-        if (!filmStorage.getFilmById(id).getLikes().contains(userId)) {
+        if (!filmStorage.getFilmById(id).getLikeIds().contains(userId)) {
             throw new BadRequestException("The user did not like this movie!");
         }
         Film film = filmStorage.getFilmById(id);
-        film.getLikes().add(userId);
+        film.getLikeIds().add(userId);
         film.setRate(film.getRate() - 1);
-        log.info("Removed the like!");
-        return ("To the user under the login "
+        log.info("To the user under the login "
                 + userStorage.getUserById(userId).getLogin()
                 + " removed the like from the movie " + film.getName());
     }
@@ -87,8 +85,8 @@ public class FilmService {
     public List<Film> getPopularFilms(Integer count) {
         return getFilms()
                 .stream()
-                .filter(film -> film.getLikes() != null)
-                .sorted((t1, t2) -> t2.getLikes().size() - t1.getLikes().size())
+                .filter(film -> film.getLikeIds() != null)
+                .sorted((t1, t2) -> t2.getLikeIds().size() - t1.getLikeIds().size())
                 .limit(count)
                 .collect(Collectors.toList());
     }

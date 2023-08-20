@@ -8,31 +8,32 @@ import ru.yandex.practicum.filmorate.exception.BadRequestException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.ErrorResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RestControllerAdvice
 public class ErrorHandler {
 
+    private static final Logger logger = LoggerFactory.getLogger(ErrorHandler.class);
+
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleBadRequest(final ValidationException e) {
-        return new ErrorResponse(
-                e.getMessage()
-        );
+        logger.error(e.getMessage(), e);
+        return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleNotFoundRequest(final NotFoundException e) {
-        return new ErrorResponse(
-                e.getMessage()
-        );
+        logger.error(e.getMessage(), e);
+        return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse otherExceptionHandler(final BadRequestException e) {
-        return new ErrorResponse(
-                e.getMessage()
-        );
+        logger.error(e.getMessage(), e);
+        return new ErrorResponse(e.getMessage());
     }
 }

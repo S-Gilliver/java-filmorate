@@ -33,9 +33,6 @@ public class InMemoryUserStorage implements UserStorage {
         if (user.getFriendIds() == null) {
             user.setFriendIds(new HashSet<>());
         }
-        if ((user.getName() == null) || user.getName().isEmpty()) {
-            user.setName(user.getLogin());
-        }
         user.setId(generateId());
         users.put(user.getId(), user);
         log.info("The user has been successfully added!");
@@ -44,12 +41,7 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User updateUser(User user) {
-        if (user.getFriendIds() == null) {
-            user.setFriendIds(new HashSet<>());
-        }
-        if ((user.getName() == null) || user.getName().isEmpty()) {
-            user.setName(user.getLogin());
-        }
+        user.setFriendIds(new HashSet<>());
         users.put(user.getId(), user);
         log.info("User data has been successfully updated!");
         return user;

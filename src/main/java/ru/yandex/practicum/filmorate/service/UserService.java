@@ -34,6 +34,9 @@ public class UserService {
 
     public User addUser(User user) {
         validateUser(user);
+        if ((user.getName() == null) || user.getName().isEmpty()) {
+            user.setName(user.getLogin());
+        }
         return userStorage.addUser(user);
     }
 
@@ -42,34 +45,35 @@ public class UserService {
             throw new NotFoundException("The user with id " + user.getId() + " does not exist!");
         }
         validateUser(user);
+        if ((user.getName() == null) || user.getName().isEmpty()) {
+            user.setName(user.getLogin());
+        }
         return userStorage.updateUser(user);
     }
 
-    public String addFriend(Integer id, Integer friendId) {
+    public void addFriend(Integer id, Integer friendId) {
         if (!userStorage.contains(id) || !userStorage.contains(friendId)) {
             throw new NotFoundException("One of the users is not registered!");
         }
         userStorage.getUserById(id).getFriendIds().add(friendId);
         userStorage.getUserById(friendId).getFriendIds().add(id);
-        log.info("Users added as friends!");
-        return (userStorage.getUserById(id).getName()
+        log.info(userStorage.getUserById(id).getName()
                 + " and " +  userStorage.getUserById(friendId).getName()
                 + " now friends!");
     }
 
-    public String deleteFriend(Integer id, Integer friendId) {
+    public void deleteFriend(Integer id, Integer friendId) {
         if (!userStorage.contains(id) || !userStorage.contains(friendId)) {
             throw new NotFoundException("One of the users is not registered!");
         }
         userStorage.getUserById(id).getFriendIds().remove(friendId);
         userStorage.getUserById(friendId).getFriendIds().remove(id);
-        log.info("Users removed from friends!");
-        return (userStorage.getUserById(id).getName()
+        log.info(userStorage.getUserById(id).getName()
                 + " and " + userStorage.getUserById(friendId).getName()
                 + " not friends anymore!");
     }
 
-    public List<User> getFriendList(Integer id) {
+    public List<User> getFriends(Integer id) {
         if (!userStorage.contains(id)) {
             throw new NotFoundException("The user is not registered!");
         }
