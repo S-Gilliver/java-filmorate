@@ -13,7 +13,6 @@ import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import javax.validation.ValidationException;
 import java.time.LocalDate;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,9 +41,6 @@ public class FilmService {
 
     public Film addFilm(Film film) {
         validateFilm(film);
-        if (film.getLikeIds() == null) {
-            film.setLikeIds(new HashSet<>());
-        }
         return filmStorage.addFilm(film);
     }
 
@@ -53,7 +49,6 @@ public class FilmService {
             throw new NotFoundException("The movie with id " + film.getId() + " does not exist!");
         }
         validateFilm(film);
-        film.setLikeIds(new HashSet<>());
         return filmStorage.updateFilm(film);
     }
 
@@ -67,9 +62,7 @@ public class FilmService {
         Film film = filmStorage.getFilmById(id);
         film.getLikeIds().add(userId);
         film.setRate(film.getRate() + 1);
-        log.info("To the user under the login "
-                + userStorage.getUserById(userId).getLogin()
-                + " liked the movie " + film.getName());
+        log.info(String.valueOf(userStorage.getUserById(userId)));
     }
 
     public void deleteLike(Integer id, Integer userId) {
@@ -82,9 +75,7 @@ public class FilmService {
         Film film = filmStorage.getFilmById(id);
         film.getLikeIds().add(userId);
         film.setRate(film.getRate() - 1);
-        log.info("To the user under the login "
-                + userStorage.getUserById(userId).getLogin()
-                + " removed the like from the movie " + film.getName());
+        log.info(String.valueOf(userStorage.getUserById(userId)));
     }
 
     public List<Film> getPopularFilms(Integer count) {

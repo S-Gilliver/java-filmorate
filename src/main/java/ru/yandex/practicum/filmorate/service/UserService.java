@@ -8,7 +8,6 @@ import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import javax.validation.ValidationException;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,9 +37,6 @@ public class UserService {
         if ((user.getName() == null) || user.getName().isEmpty()) {
             user.setName(user.getLogin());
         }
-        if (user.getFriendIds() == null) {
-            user.setFriendIds(new HashSet<>());
-        }
         return userStorage.addUser(user);
     }
 
@@ -52,7 +48,6 @@ public class UserService {
         if ((user.getName() == null) || user.getName().isEmpty()) {
             user.setName(user.getLogin());
         }
-        user.setFriendIds(new HashSet<>());
         return userStorage.updateUser(user);
     }
 
@@ -62,9 +57,7 @@ public class UserService {
         }
         userStorage.getUserById(id).getFriendIds().add(friendId);
         userStorage.getUserById(friendId).getFriendIds().add(id);
-        log.info(userStorage.getUserById(id).getName()
-                + " and " +  userStorage.getUserById(friendId).getName()
-                + " now friends!");
+        log.info(String.valueOf(userStorage.getUserById(id)));
     }
 
     public void deleteFriend(Integer id, Integer friendId) {
@@ -73,9 +66,7 @@ public class UserService {
         }
         userStorage.getUserById(id).getFriendIds().remove(friendId);
         userStorage.getUserById(friendId).getFriendIds().remove(id);
-        log.info(userStorage.getUserById(id).getName()
-                + " and " + userStorage.getUserById(friendId).getName()
-                + " not friends anymore!");
+        log.info(String.valueOf(userStorage.getUserById(id)));
     }
 
     public List<User> getFriends(Integer id) {
