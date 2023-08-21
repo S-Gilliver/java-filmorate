@@ -1,67 +1,70 @@
 package ru.yandex.practicum.filmorate.controllers;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import ru.yandex.practicum.filmorate.exception.BadRequestException;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/users")
 public class UserController {
 
-    private final Map<Integer, User> users = new HashMap<>();
-    private int id = 1;
+    private final UserService userService;
 
     @GetMapping
     public Collection<User> getUsers() {
-        return users.values();
+        return userService.getUsers();
+    }
+
+    @GetMapping("/{id}")
+    public User findById(@PathVariable Integer id) {
+        return userService.getUserById(id);
     }
 
     @PostMapping
     public User addUser(@RequestBody @Valid User user) {
-        validateUser(user);
-        if ((user.getName() == null) || user.getName().isEmpty()) {
-            user.setName(user.getLogin());
-        }
-        user.setId(generateId());
-        users.put(user.getId(), user);
-        log.info("The user has been successfully added!");
-        return user;
+        return userService.addUser(user);
     }
 
     @PutMapping
     public User updateUser(@RequestBody @Valid User user) {
-        if (!users.containsKey(user.getId())) {
-            throw new NotFoundException("The user with id " + user.getId() + " does not exist!");
-        }
-        validateUser(user);
-        if ((user.getName() == null) || user.getName().isEmpty()) {
-            user.setName(user.getLogin());
-        }
-        users.put(user.getId(), user);
-        log.info("User data has been successfully updated!");
-        return user;
+        return userService.updateUser(user);
     }
 
-    private void validateUser(User user) {
-        if (user.getLogin().contains(" ")) {
-            throw new BadRequestException("The login cannot contain spaces!");
-        }
+    @PutMapping("/{id}/friends/{friendId}")
+    public void addFriend(@PathVariable Integer id,
+                            @PathVariable Integer friendId) {
+        userService.addFriend(id, friendId);
     }
 
-    private int generateId() {
-        return id++;
+    @DeleteMapping("/{id}/friends/{friendId}")
+    public void deleteFriend(@PathVariable Integer id,
+                               @PathVariable Integer friendId) {
+        userService.deleteFriend(id, friendId);
+    }
+
+    @GetMapping("/{id}/friends")
+    public List<User> getFriendList(@PathVariable Integer id) {
+        return userService.getFriends(id);
+    }
+
+    @GetMapping("/{id}/friends/common/{otherId}")
+    public List<User> getMutualFriends(@PathVariable Integer id,
+                                        @PathVariable Integer otherId) {
+        return userService.getMutualFriends(id, otherId);
     }
 }
