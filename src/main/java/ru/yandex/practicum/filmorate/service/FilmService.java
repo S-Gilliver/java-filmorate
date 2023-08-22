@@ -72,6 +72,9 @@ public class FilmService {
     }
 
     public void deleteLike(Integer id, Integer userId) {
+        if (userId < 1) {
+            throw new NotFoundException("id < 1");
+        }
         filmStorage.getFilmById(id).orElseThrow(() -> new NotFoundException("The movie with id " +
                 filmStorage.getFilmById(id).get().getId() + " does not exist!"));
         filmStorage.getUserById(userId).orElseThrow(() -> new NotFoundException("The user with id " +
