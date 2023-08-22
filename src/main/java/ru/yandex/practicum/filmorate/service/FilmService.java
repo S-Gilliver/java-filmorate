@@ -63,8 +63,8 @@ public class FilmService {
     public void addLike(Integer id, Integer userId) {
         filmStorage.getFilmById(id).orElseThrow(() -> new NotFoundException("The movie with id " +
                 filmStorage.getFilmById(id).get().getId() + " does not exist!"));
-        filmStorage.getUserById(id).orElseThrow(() -> new NotFoundException("The user with id " +
-                filmStorage.getUserById(id).get().getId() + " does not exist!"));
+        filmStorage.getUserById(userId).orElseThrow(() -> new NotFoundException("The user with id " +
+                filmStorage.getUserById(userId).get().getId() + " does not exist!"));
         filmStorage.addLike(id, userId);
         log.info(String.valueOf(filmStorage.getUserById(userId)));
     }
@@ -72,8 +72,8 @@ public class FilmService {
     public void deleteLike(Integer id, Integer userId) {
         filmStorage.getFilmById(id).orElseThrow(() -> new NotFoundException("The movie with id " +
                 filmStorage.getFilmById(id).get().getId() + " does not exist!"));
-        filmStorage.getUserById(id).orElseThrow(() -> new NotFoundException("The user with id " +
-                filmStorage.getUserById(id).get().getId() + " does not exist!"));
+        filmStorage.getUserById(userId).orElseThrow(() -> new NotFoundException("The user with id " +
+                filmStorage.getUserById(userId).get().getId() + " does not exist!"));
         filmStorage.deleteLike(id, userId);
         log.info(String.valueOf(filmStorage.getUserById(userId)));
     }
