@@ -1,6 +1,8 @@
 package ru.yandex.practicum.filmorate.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -17,6 +19,8 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class User {
 
     @Positive
@@ -35,7 +39,7 @@ public class User {
     @PastOrPresent
     private LocalDate birthday;
 
-    @JsonIgnore
-    private Set<Integer> friendIds = new HashSet<>();
+  //  @JsonIgnore
+  //  private Set<Integer> friendIds = new HashSet<>();
 }
 
