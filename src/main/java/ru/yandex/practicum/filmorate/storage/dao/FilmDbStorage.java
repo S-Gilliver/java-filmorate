@@ -46,8 +46,7 @@ public class FilmDbStorage implements FilmStorage {
         Film film;
         try {
             film = jdbcTemplate.queryForObject(sqlFilm, (rs, rowNum) -> makeFilm(rs), id);
-        }
-        catch (EmptyResultDataAccessException e) {
+        } catch (EmptyResultDataAccessException e) {
             throw new NotFoundException("Фильм с идентификатором " +
                     id + " не зарегистрирован!");
         }
@@ -116,7 +115,7 @@ public class FilmDbStorage implements FilmStorage {
             genreService.addFilmGenres(film.getId(), film.getGenres());
         }
 
-        if(film.getLikeIds() != null) {
+        if (film.getLikeIds() != null) {
             for (Integer userId : film.getLikeIds()) {
                 addLike(film.getId(), userId);
             }
