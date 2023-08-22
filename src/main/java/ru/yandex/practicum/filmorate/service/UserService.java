@@ -1,10 +1,11 @@
 package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import javax.validation.ValidationException;
 import java.util.Collection;
@@ -17,7 +18,7 @@ public class UserService {
 
     private final UserStorage userStorage;
 
-    public UserService(UserStorage userStorage) {
+    public UserService(@Qualifier("UserDbStorage") UserStorage userStorage) {
         this.userStorage = userStorage;
     }
 
@@ -55,8 +56,7 @@ public class UserService {
         if (!userStorage.contains(id) || !userStorage.contains(friendId)) {
             throw new NotFoundException("One of the users is not registered!");
         }
-        userStorage.getUserById(id).getFriendIds().add(friendId);
-        userStorage.getUserById(friendId).getFriendIds().add(id);
+        userStorage.addFriend(id, friendId);
         log.info(String.valueOf(userStorage.getUserById(id)));
     }
 
@@ -64,8 +64,7 @@ public class UserService {
         if (!userStorage.contains(id) || !userStorage.contains(friendId)) {
             throw new NotFoundException("One of the users is not registered!");
         }
-        userStorage.getUserById(id).getFriendIds().remove(friendId);
-        userStorage.getUserById(friendId).getFriendIds().remove(id);
+        userStorage.deleteFriend(id, friendId);
         log.info(String.valueOf(userStorage.getUserById(id)));
     }
 

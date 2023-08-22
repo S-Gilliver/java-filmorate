@@ -1,12 +1,15 @@
-package ru.yandex.practicum.filmorate.storage.film;
+package ru.yandex.practicum.filmorate.storage;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -40,6 +43,38 @@ public class InMemoryFilmStorage implements FilmStorage {
         films.put(film.getId(), film);
         log.info("The movie has been successfully updated!");
         return film;
+    }
+
+    @Override
+    public boolean deleteFilm(Film film) {
+        films.remove(film.getId());
+        return true;
+    }
+
+    @Override
+    public boolean addLike(Integer id, Integer userId) {
+        Film film = getFilmById(id);
+        film.getLikeIds().add(userId);
+        film.setRate(film.getRate() + 1);
+        return true;
+    }
+
+    @Override
+    public boolean deleteLike(Integer id, Integer userId) {
+        Film film = getFilmById(id);
+        film.getLikeIds().add(userId);
+        film.setRate(film.getRate() - 1);
+        return true;
+    }
+
+    @Override
+    public List<Film> getPopularFilms(Integer count) {
+        return getFilms()
+                .stream()
+                .filter(film -> film.getLikeIds() != null)
+                .sorted((t1, t2) -> t2.getLikeIds().size() - t1.getLikeIds().size())
+                .limit(count)
+                .collect(Collectors.toList());
     }
 
     @Override
