@@ -3,21 +3,15 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.BadRequestException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.dao.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
-import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storage.dao.GenreStorage;
 import ru.yandex.practicum.filmorate.storage.dao.MpaStorage;
-import ru.yandex.practicum.filmorate.storage.dao.UserStorage;
 
 import javax.validation.ValidationException;
 import java.time.LocalDate;
-import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -80,7 +74,7 @@ public class FilmService {
                 filmStorage.getFilmById(id).get().getId() + " does not exist!"));
         filmStorage.getUserById(id).orElseThrow(() -> new NotFoundException("The user with id " +
                 filmStorage.getUserById(id).get().getId() + " does not exist!"));
-        filmStorage.addLike(id, userId);
+        filmStorage.deleteLike(id, userId);
         log.info(String.valueOf(filmStorage.getUserById(userId)));
     }
 
