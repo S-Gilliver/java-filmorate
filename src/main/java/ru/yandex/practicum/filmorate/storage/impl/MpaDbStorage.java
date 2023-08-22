@@ -25,6 +25,7 @@ public class MpaDbStorage implements MpaStorage {
         this.jdbcTemplate = jdbcTemplate;
         this.mpaMapper = mpaMapper;
     }
+
     @Override
     public Collection<Mpa> findAll() {
         String sql = "SELECT * FROM MPA";
