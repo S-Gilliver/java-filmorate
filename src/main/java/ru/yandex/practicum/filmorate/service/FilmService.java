@@ -47,8 +47,10 @@ public class FilmService {
     }
 
     public Film updateFilm(Film film) {
-        filmStorage.getFilmById(film.getId()).orElseThrow(() -> new NotFoundException("The movie with id " + film.getId() + " does not exist!"));
         validateFilm(film);
+        filmStorage.getFilmById(film.getId())
+                .orElseThrow(() -> new NotFoundException("The movie with id "
+                        + film.getId() + " does not exist!"));
         Film resultFilm = filmStorage.updateFilm(film);
         resultFilm.setGenres(genreDbStorage.getByFilmId(film.getId()));
         return resultFilm;
