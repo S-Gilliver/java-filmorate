@@ -2,11 +2,11 @@ package ru.yandex.practicum.filmorate.storage.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.dao.UserStorage;
@@ -94,11 +94,11 @@ public class UserDbStorage implements UserStorage {
     public void addFriend(Integer id, Integer friendId) {
         final String sqlQuery = "INSERT INTO friends (user_id, friend_id) " +
                 "VALUES (?, ?)";
-        String checkDuplicate = "SELECT * FROM friends WHERE user_id = ? AND friend_id = ?";
-        SqlRowSet checkRows = jdbcTemplate.queryForRowSet(checkDuplicate, id, friendId);
-        if (!checkRows.next()) {
+        try {
             jdbcTemplate.update(sqlQuery, id, friendId);
             log.info("The user has been successfully added to friends");
+        } catch (DataIntegrityViolationException ex) {
+            log.error("The user is already a friend");
         }
     }
 

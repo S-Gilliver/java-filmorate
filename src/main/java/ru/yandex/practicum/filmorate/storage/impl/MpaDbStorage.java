@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.storage.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
@@ -11,7 +12,6 @@ import ru.yandex.practicum.filmorate.storage.dao.MpaStorage;
 import ru.yandex.practicum.filmorate.storage.mapper.MpaMapper;
 
 import java.util.Collection;
-import java.util.List;
 
 @Slf4j
 @Repository
@@ -49,10 +49,10 @@ public class MpaDbStorage implements MpaStorage {
                 "from MPA AS m " +
                 "join Films AS f ON m.ID = f.MPA_ID " +
                 "where f.ID = ?";
-        List<Mpa> mpas = jdbcTemplate.query(sqlQuery, mpaMapper, id);
-        if (mpas.size() != 1) {
+        try {
+            return jdbcTemplate.queryForObject(sqlQuery, mpaMapper,id);
+        } catch (EmptyResultDataAccessException e) {
             return null;
         }
-        return mpas.get(0);
     }
 }

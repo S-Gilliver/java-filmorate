@@ -35,12 +35,12 @@ public class GenreDbStorage implements GenreStorage {
     @Override
     public Genre getById(int id) {
         final String sql = "SELECT * FROM genre WHERE id = ?";
-        SqlRowSet genreRows = jdbcTemplate.queryForRowSet(sql, id);
-        if (!genreRows.next()) {
+        List<Genre> genreList = jdbcTemplate.query(sql, genreMapper, id);
+        if (genreList.isEmpty()) {
             log.debug("Genre {} not found.", id);
             throw new NotFoundException("Genre not found");
         }
-        return jdbcTemplate.queryForObject(sql, genreMapper, id);
+        return genreList.get(0);
     }
 
     @Override
@@ -50,5 +50,21 @@ public class GenreDbStorage implements GenreStorage {
                 "LEFT JOIN film_genre FG on genre.id = FG.genre_id " +
                 "WHERE film_id = ?";
         return jdbcTemplate.query(sqlQuery, genreMapper, id);
+    }
+
+    public void deleteFilmGenres(int filmId) {
+        final String deleteGenresQuery = "DELETE FROM film_genre WHERE film_id = ?";
+        jdbcTemplate.update(deleteGenresQuery, filmId);
+    }
+
+    public void addFilmGenres(int filmId, List<Genre> genres) {
+        final String updateGenresQuery = "INSERT INTO film_genre (film_id, genre_id) VALUES (?, ?)";
+        for (Genre g : genres) {
+            String checkDuplicate = "SELECT * FROM film_genre WHERE film_id = ? AND genre_id = ?";
+            SqlRowSet checkRows = jdbcTemplate.queryForRowSet(checkDuplicate, filmId, g.getId());
+            if (!checkRows.next()) {
+                jdbcTemplate.update(updateGenresQuery, filmId, g.getId());
+            }
+        }
     }
 }

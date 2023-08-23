@@ -12,4 +12,5 @@ public interface GenreStorage {
     Genre getById(int id);
 
     List<Genre> getByFilmId(int id);
+
 }
