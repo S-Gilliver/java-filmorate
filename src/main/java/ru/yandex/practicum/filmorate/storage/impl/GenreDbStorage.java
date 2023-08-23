@@ -61,6 +61,7 @@ public class GenreDbStorage implements GenreStorage {
     public void addFilmGenres(int filmId, List<Genre> genres) {
         final String updateGenresQuery = "INSERT INTO film_genre (film_id, genre_id) VALUES (?, ?)";
         List<Object[]> batchArgs = new ArrayList<>();
+
         for (Genre g : genres) {
             String checkDuplicate = "SELECT * FROM film_genre WHERE film_id = ? AND genre_id = ?";
             SqlRowSet checkRows = jdbcTemplate.queryForRowSet(checkDuplicate, filmId, g.getId());
@@ -68,10 +69,6 @@ public class GenreDbStorage implements GenreStorage {
                 batchArgs.add(new Object[]{filmId, g.getId()});
             }
         }
-        if (!batchArgs.isEmpty()) {
-            jdbcTemplate.batchUpdate(updateGenresQuery, batchArgs);
-        }
+        jdbcTemplate.batchUpdate(updateGenresQuery, batchArgs);
     }
-
-
 }
