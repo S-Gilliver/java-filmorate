@@ -10,6 +10,8 @@ import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.dao.MpaStorage;
 import ru.yandex.practicum.filmorate.storage.mapper.MpaMapper;
 
+import java.util.Collection;
+
 @Slf4j
 @Repository
 public class MpaDbStorage implements MpaStorage {
@@ -24,9 +26,9 @@ public class MpaDbStorage implements MpaStorage {
     }
 
     @Override
-    public Mpa findAll() {
+    public Collection<Mpa> findAll() {
         String sql = "SELECT * FROM MPA";
-        return jdbcTemplate.queryForObject(sql, mpaMapper);
+        return jdbcTemplate.query(sql, mpaMapper);
     }
 
     @Override

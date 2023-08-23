@@ -2,9 +2,11 @@ package ru.yandex.practicum.filmorate.storage.dao;
 
 import ru.yandex.practicum.filmorate.model.Mpa;
 
+import java.util.Collection;
+
 public interface MpaStorage {
 
-    Mpa findAll();
+    Collection<Mpa> findAll();
 
     Mpa getById(int id);
 
