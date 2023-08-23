@@ -1,42 +1,46 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.BadRequestException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
-import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
+import ru.yandex.practicum.filmorate.storage.dao.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.dao.GenreStorage;
+import ru.yandex.practicum.filmorate.storage.dao.MpaStorage;
+import ru.yandex.practicum.filmorate.storage.impl.FilmDbStorage;
 
 import javax.validation.ValidationException;
 import java.time.LocalDate;
-import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class FilmService {
 
     private final FilmStorage filmStorage;
-    private final UserStorage userStorage;
 
-    public FilmService(InMemoryFilmStorage filmStorage, InMemoryUserStorage userStorage) {
-        this.filmStorage = filmStorage;
-        this.userStorage = userStorage;
-    }
+    private final GenreStorage genreStorage;
 
-    public Collection<Film> getFilms() {
-        return filmStorage.getFilms();
+    private final MpaStorage mpaStorage;
+
+    private final FilmDbStorage filmDbStorage;
+
+    public List<Film> getFilms() {
+        List<Film> films = filmDbStorage.getFilmsWithMpa();
+        films.forEach(f -> {
+            f.setGenres(genreStorage.getByFilmId(f.getId()));
+        });
+        return films;
     }
 
     public Film getFilmById(Integer id) {
-        if (!filmStorage.contains(id)) {
-            throw new NotFoundException("The movie was not found!");
-        }
-        return filmStorage.getFilmById(id);
+        Film film = filmDbStorage.getFilmWithMpaById(id)
+                .orElseThrow(() -> new NotFoundException("The movie was not found!"));
+        log.info("The film was received!");
+        film.setGenres(genreStorage.getByFilmId(id));
+        return film;
     }
 
     public Film addFilm(Film film) {
@@ -45,46 +49,42 @@ public class FilmService {
     }
 
     public Film updateFilm(Film film) {
-        if (!filmStorage.contains(film.getId())) {
-            throw new NotFoundException("The movie with id " + film.getId() + " does not exist!");
-        }
         validateFilm(film);
-        return filmStorage.updateFilm(film);
+        containsFilm(film.getId());
+        Film resultFilm = filmStorage.updateFilm(film);
+        resultFilm.setGenres(genreStorage.getByFilmId(film.getId()));
+        return resultFilm;
+    }
+
+    public void deleteFilm(int id) {
+        containsFilm(id);
+        filmStorage.deleteFilm(id);
     }
 
     public void addLike(Integer id, Integer userId) {
-        if (!filmStorage.contains(id) || !userStorage.contains(userId)) {
-            throw new NotFoundException("There is no such movie or user!");
-        }
-        if (filmStorage.getFilmById(id).getLikeIds().contains(userId)) {
-            throw new BadRequestException("The user has already liked this movie!");
-        }
-        Film film = filmStorage.getFilmById(id);
-        film.getLikeIds().add(userId);
-        film.setRate(film.getRate() + 1);
-        log.info(String.valueOf(userStorage.getUserById(userId)));
+        containsFilm(id);
+        containsUser(userId);
+        filmStorage.addLike(id, userId);
+        log.info(String.valueOf(filmStorage.getUserById(userId)));
     }
 
     public void deleteLike(Integer id, Integer userId) {
-        if (!filmStorage.contains(id) || !userStorage.contains(userId)) {
-            throw new NotFoundException("There is no such movie or user!");
+        if (userId < 1) {
+            throw new NotFoundException("id < 1");
         }
-        if (!filmStorage.getFilmById(id).getLikeIds().contains(userId)) {
-            throw new BadRequestException("The user did not like this movie!");
-        }
-        Film film = filmStorage.getFilmById(id);
-        film.getLikeIds().add(userId);
-        film.setRate(film.getRate() - 1);
-        log.info(String.valueOf(userStorage.getUserById(userId)));
+        containsFilm(id);
+        containsUser(userId);
+        filmStorage.deleteLike(id, userId);
+        log.info(String.valueOf(filmStorage.getUserById(userId)));
     }
 
     public List<Film> getPopularFilms(Integer count) {
-        return getFilms()
-                .stream()
-                .filter(film -> film.getLikeIds() != null)
-                .sorted((t1, t2) -> t2.getLikeIds().size() - t1.getLikeIds().size())
-                .limit(count)
-                .collect(Collectors.toList());
+        List<Film> films = filmStorage.getPopularFilms(count);
+        films.forEach(f -> {
+            f.setGenres(genreStorage.getByFilmId(f.getId()));
+            f.setMpa(mpaStorage.getByFilmId(f.getId()));
+        });
+        return films;
     }
 
     private void validateFilm(Film film) {
@@ -94,5 +94,13 @@ public class FilmService {
         if (film.getDuration() == null) {
             throw new ValidationException("An error in the duration of the movie!");
         }
+    }
+
+    private void containsFilm(int id) {
+        filmStorage.getFilmById(id).orElseThrow(() -> new NotFoundException("The movie with id does not exist!"));
+    }
+
+    private void containsUser(int id) {
+        filmStorage.getUserById(id).orElseThrow(() -> new NotFoundException("The user with id does not exist!"));
     }
 }
