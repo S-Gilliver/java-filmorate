@@ -10,7 +10,6 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.dao.GenreStorage;
 import ru.yandex.practicum.filmorate.storage.mapper.GenreMapper;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
