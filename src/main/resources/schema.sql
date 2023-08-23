@@ -31,6 +31,7 @@ CREATE TABLE IF NOT EXISTS genre (
 CREATE TABLE IF NOT EXISTS film_genre (
     film_id int NOT NULL REFERENCES films(id) on update cascade ON DELETE CASCADE,
     genre_id int NOT NULL REFERENCES genre(id) on update cascade ON DELETE CASCADE,
+    PRIMARY KEY (film_id, genre_id)
 );
 
 CREATE TABLE IF NOT EXISTS film_likes (
