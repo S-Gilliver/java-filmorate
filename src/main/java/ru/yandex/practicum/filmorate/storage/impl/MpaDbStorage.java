@@ -4,14 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.dao.MpaStorage;
 import ru.yandex.practicum.filmorate.storage.mapper.MpaMapper;
-
-import java.util.Collection;
 
 @Slf4j
 @Repository
@@ -27,21 +24,22 @@ public class MpaDbStorage implements MpaStorage {
     }
 
     @Override
-    public Collection<Mpa> findAll() {
+    public Mpa findAll() {
         String sql = "SELECT * FROM MPA";
-        return jdbcTemplate.query(sql, mpaMapper);
+        return jdbcTemplate.queryForObject(sql, mpaMapper);
     }
 
     @Override
     public Mpa getById(int id) {
         String sql = "SELECT * FROM mpa WHERE id = ?";
-        SqlRowSet mpaRows = jdbcTemplate.queryForRowSet(sql, id);
-        if (!mpaRows.next()) {
+        try {
+            return jdbcTemplate.queryForObject(sql, mpaMapper, id);
+        } catch (EmptyResultDataAccessException e) {
             log.debug("Rating {} not found.", id);
             throw new NotFoundException("Rating not found");
         }
-        return jdbcTemplate.queryForObject(sql, mpaMapper, id);
     }
+
 
     @Override
     public Mpa getByFilmId(int id) {

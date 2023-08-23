@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.dao.GenreStorage;
 import ru.yandex.practicum.filmorate.storage.mapper.GenreMapper;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -35,12 +36,12 @@ public class GenreDbStorage implements GenreStorage {
     @Override
     public Genre getById(int id) {
         final String sql = "SELECT * FROM genre WHERE id = ?";
-        List<Genre> genreList = jdbcTemplate.query(sql, genreMapper, id);
-        if (genreList.isEmpty()) {
+        List<Genre> genres = jdbcTemplate.query(sql, genreMapper, id);
+        if (genres.isEmpty()) {
             log.debug("Genre {} not found.", id);
             throw new NotFoundException("Genre not found");
         }
-        return genreList.get(0);
+        return genres.get(0);
     }
 
     @Override
@@ -59,12 +60,18 @@ public class GenreDbStorage implements GenreStorage {
 
     public void addFilmGenres(int filmId, List<Genre> genres) {
         final String updateGenresQuery = "INSERT INTO film_genre (film_id, genre_id) VALUES (?, ?)";
+        List<Object[]> batchArgs = new ArrayList<>();
         for (Genre g : genres) {
             String checkDuplicate = "SELECT * FROM film_genre WHERE film_id = ? AND genre_id = ?";
             SqlRowSet checkRows = jdbcTemplate.queryForRowSet(checkDuplicate, filmId, g.getId());
             if (!checkRows.next()) {
-                jdbcTemplate.update(updateGenresQuery, filmId, g.getId());
+                batchArgs.add(new Object[]{filmId, g.getId()});
             }
         }
+        if (!batchArgs.isEmpty()) {
+            jdbcTemplate.batchUpdate(updateGenresQuery, batchArgs);
+        }
     }
+
+
 }

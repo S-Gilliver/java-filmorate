@@ -49,18 +49,6 @@ CREATE TABLE IF NOT EXISTS friends (
             REFERENCES users(id) on update cascade on delete cascade,
     CONSTRAINT fk_friend_friends
         FOREIGN KEY (friend_id)
-            REFERENCES users(id) on update cascade on delete cascade
+            REFERENCES users(id) on update cascade on delete cascade,
+    UNIQUE (user_id, friend_id)
 );
-
-SELECT
-    f.id,
-    f.description,
-    f.name,
-    f.release_date,
-    f.duration,
-    f.mpa_id,
-    m.name AS mpa_name
-FROM
-    films f
-        JOIN
-    mpa m ON f.mpa_id = m.id;

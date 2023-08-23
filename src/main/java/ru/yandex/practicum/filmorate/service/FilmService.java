@@ -63,7 +63,7 @@ public class FilmService {
 
     public void addLike(Integer id, Integer userId) {
         containsFilm(id);
-        containsUser(id);
+        containsUser(userId);
         filmStorage.addLike(id, userId);
         log.info(String.valueOf(filmStorage.getUserById(userId)));
     }
@@ -73,7 +73,7 @@ public class FilmService {
             throw new NotFoundException("id < 1");
         }
         containsFilm(id);
-        containsUser(id);
+        containsUser(userId);
         filmStorage.deleteLike(id, userId);
         log.info(String.valueOf(filmStorage.getUserById(userId)));
     }
