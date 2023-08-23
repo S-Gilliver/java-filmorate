@@ -97,12 +97,10 @@ public class FilmService {
     }
 
     private void containsFilm(int id) {
-        filmStorage.getFilmById(id).orElseThrow(() -> new NotFoundException("The movie with id " +
-                filmStorage.getFilmById(id).get().getId() + " does not exist!"));
+        filmStorage.getFilmById(id).orElseThrow(() -> new NotFoundException("The movie with id does not exist!"));
     }
 
     private void containsUser(int id) {
-        filmStorage.getUserById(id).orElseThrow(() -> new NotFoundException("The user with id " +
-                filmStorage.getUserById(id).get().getId() + " does not exist!"));
+        filmStorage.getUserById(id).orElseThrow(() -> new NotFoundException("The user with id does not exist!"));
     }
 }
